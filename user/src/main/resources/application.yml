@@ -1,0 +1,12 @@
+security:
+  secretToken: 7689098B59776874367639792F423F4528482B4D6251765468576D5A71347438
+
+server:
+  port: 8092
+
+spring:
+  application:
+    name: UserService
+
+
+
