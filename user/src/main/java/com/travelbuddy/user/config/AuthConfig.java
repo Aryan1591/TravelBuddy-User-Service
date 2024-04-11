@@ -23,7 +23,7 @@ public class AuthConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/users/login", "/users/logout", "users/register").permitAll())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
 
     }

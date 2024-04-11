@@ -1,6 +1,6 @@
 package com.travelbuddy.user.service;
 
-import com.travelbuddy.user.entity.UserInfo;
+import com.travelbuddy.user.entity.UserCredentials;
 import com.travelbuddy.user.model.CustomizedUserDetails;
 import com.travelbuddy.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UserLoaderService implements UserDetailsService {
    private UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserInfo> userDetail = userRepository.findById(username);
+        Optional<UserCredentials> userDetail = userRepository.findById(username);
         return userDetail.map(CustomizedUserDetails::new).orElseThrow(() -> new UsernameNotFoundException(String.format("User not found with %s",username)));
     }
 }

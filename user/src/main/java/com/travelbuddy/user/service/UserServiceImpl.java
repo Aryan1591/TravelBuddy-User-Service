@@ -1,6 +1,6 @@
 package com.travelbuddy.user.service;
 
-import com.travelbuddy.user.entity.UserInfo;
+import com.travelbuddy.user.entity.UserCredentials;
 import com.travelbuddy.user.exception.DuplicateAccountException;
 import com.travelbuddy.user.exception.PasswordMismatchException;
 import com.travelbuddy.user.exception.UserNotFoundException;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String login(LoginDTO loginDTO) throws UserNotFoundException, PasswordMismatchException {
-        Optional<UserInfo> userDetails = userRepository.findById(loginDTO.getUserName());
+        Optional<UserCredentials> userDetails = userRepository.findById(loginDTO.getUserName());
         if (userDetails.isEmpty()) {
             throw new UserNotFoundException("User not found");
         }
@@ -50,12 +50,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfo register(UserInfo userInfo) throws DuplicateAccountException {
-        Optional<UserInfo> userDetails = userRepository.findById(userInfo.getUserName());
+    public UserCredentials register(UserCredentials userInfo) throws DuplicateAccountException {
+        Optional<UserCredentials> userDetails = userRepository.findById(userInfo.getUserName());
         if (!userDetails.isEmpty()) {
             throw new DuplicateAccountException("UserName Already Exists, choose different username");
         }
+        userInfo.setPassWord(passwordEncoder.encode(userInfo.getPassWord()));
         userRepository.save(userInfo);
         return userInfo;
     }
+    
+
+    @Override
+    public UserCredentials updateUser(String userName, UserCredentials userInfo) throws UserNotFoundException {
+        Optional<UserCredentials> existingUser = userRepository.findById(userName);
+        if (existingUser.isEmpty()) {
+            throw new UserNotFoundException("User not found with UserName: " + userName);
+        }
+        userInfo.setUserName(existingUser.get().getUserName()); // Ensure username doesn't change
+        userInfo.setPassWord(passwordEncoder.encode(userInfo.getPassWord())); // Encode password
+        return userRepository.save(userInfo);
+    }
+
+    @Override
+    public void deleteUser(String userName) throws UserNotFoundException {
+        Optional<UserCredentials> user = userRepository.findById(userName);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("User not found with UserName: " + userName);
+        }
+        userRepository.deleteById(userName);
+    }
+
 }
