@@ -1,6 +1,6 @@
 package com.travelbuddy.user.model;
 
-import com.travelbuddy.user.entity.UserInfo;
+import com.travelbuddy.user.entity.UserCredentials;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class CustomizedUserDetails implements UserDetails {
      private String userName;
      private String password;
 
-     public CustomizedUserDetails(UserInfo loginDTO) {
+     public CustomizedUserDetails(UserCredentials loginDTO) {
          this.userName = loginDTO.getUserName();
          this.password = loginDTO.getPassWord();
      }
