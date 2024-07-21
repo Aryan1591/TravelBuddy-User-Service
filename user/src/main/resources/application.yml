@@ -8,20 +8,12 @@ spring:
   application:
     name: UserService
 
-    datasource:
-      url: jdbc:h2:mem:testdb
-      driverClassName: org.h2.Driver
-      username: sa
-      password: password
+  data:
+    mongodb:
+      uri:  mongodb+srv://deva:deva123@atlascluster.inazn0l.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
+      database: TravelBuddy
 
-#  datasource:
-#    url: jdbc:postgresql://Pz1AdozyH4pJiudjM2nmcPL1Rv57fKOc@rain.db.elephantsql.com/tdxhfeep
-#    driverClassName: org.postgresql.Driver
-#    username: tdxhfeep
-#    password: Pz1AdozyH4pJiudjM2nmcPL1Rv57fKOc
-#
-#  jpa:
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 
 eureka:
   instance:
