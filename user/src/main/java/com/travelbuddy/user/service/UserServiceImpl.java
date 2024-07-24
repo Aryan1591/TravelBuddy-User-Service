@@ -5,13 +5,11 @@ import com.travelbuddy.user.entity.UsersPersonalInfo;
 import com.travelbuddy.user.exception.DuplicateAccountException;
 import com.travelbuddy.user.exception.PasswordMismatchException;
 import com.travelbuddy.user.exception.UserNotFoundException;
-import com.travelbuddy.user.model.AboutMeDTO;
-import com.travelbuddy.user.model.LoginDTO;
-import com.travelbuddy.user.model.SignupDTO;
-import com.travelbuddy.user.model.UpdateDTO;
+import com.travelbuddy.user.model.*;
 import com.travelbuddy.user.repository.UserPersonalInfoRepository;
 import com.travelbuddy.user.repository.UsersCredentialsInfoRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(LoginDTO loginDTO) throws UserNotFoundException, PasswordMismatchException {
+    public String login(@NotNull LoginDTO loginDTO) throws UserNotFoundException, PasswordMismatchException {
         Optional<UsersCredentialsInfo> userDetails = userscredentialsinfoRepository.findById(loginDTO.getUsername());
         if (userDetails.isEmpty()) {
             throw new UserNotFoundException("User not found");
@@ -70,7 +68,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public String register(SignupDTO signupDTO) throws DuplicateAccountException {
+    public String register(@NotNull SignupDTO signupDTO) throws DuplicateAccountException {
         UsersPersonalInfo userspersonalinfo = new UsersPersonalInfo(signupDTO.getUsername(), signupDTO.getGender(), signupDTO.getDob(), true);
 
         UsersCredentialsInfo userscredentialsinfo = new UsersCredentialsInfo(signupDTO.getUsername(), signupDTO.getEmail()
@@ -94,19 +92,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public AboutMeDTO getUserByUsername(String UserName) {
 
-        UsersPersonalInfo personalInfoOpt = userpersonalinfoRepository.findById(UserName).get();
-        UsersCredentialsInfo credentialsInfoOpt = userscredentialsinfoRepository.findById(UserName).get();
-        return mapToDTO(personalInfoOpt, credentialsInfoOpt);
+        Optional<UsersPersonalInfo> personalInfoOpt = userpersonalinfoRepository.findById(UserName);
+        Optional<UsersCredentialsInfo> credentialsInfoOpt = userscredentialsinfoRepository.findById(UserName);
+        if (personalInfoOpt.isEmpty())
+            throw new UserNotFoundException("User Not Found");
+
+        return mapToDTO(personalInfoOpt.get(), credentialsInfoOpt.get());
     }
 
-    private AboutMeDTO mapToDTO(final UsersPersonalInfo personalinfo, final UsersCredentialsInfo credentialsinfo) {
+    @NotNull
+    private AboutMeDTO mapToDTO(@NotNull final UsersPersonalInfo personalinfo, @NotNull final UsersCredentialsInfo credentialsinfo) {
         AboutMeDTO aboutMeDTO = new AboutMeDTO();
         aboutMeDTO.setName(personalinfo.getUsername());
         aboutMeDTO.setEmail(credentialsinfo.getEmail());
         aboutMeDTO.setDob(personalinfo.getDob());
         aboutMeDTO.setGender(personalinfo.getGender());
         aboutMeDTO.setPhnum_visibility(personalinfo.isPhnum_visibility());
-        //	aboutMeDTO.setPassword(credentialsinfo.getPassword());
         aboutMeDTO.setPhnumber(credentialsinfo.getPhnumber());
         return aboutMeDTO;
     }
@@ -114,34 +115,59 @@ public class UserServiceImpl implements UserService {
 
     public String updateUserByUsername(UpdateDTO updateDTO, String userName) {
         // Retrieve user personal information
-        UsersPersonalInfo updatePersonalInfo = userpersonalinfoRepository.findById(userName).get();
+        Optional<UsersPersonalInfo> updatePersonalInfo = userpersonalinfoRepository.findById(userName);
         // Retrieve user credentials information
-        UsersCredentialsInfo updateCredentialsInfo = userscredentialsinfoRepository.findById(userName).get();
+        Optional<UsersCredentialsInfo> updateCredentialsInfo = userscredentialsinfoRepository.findById(userName);
 
-        // Update personal information
-//		updatePersonalInfo.setName(updateDTO.getName());
-        updatePersonalInfo.setGender(updateDTO.getGender());
-        updatePersonalInfo.setDob(updateDTO.getDob());
-        //System.out.println(updateDTO.isPhnum_visibility());
-        log.info("" + updateDTO.isPhnum_visibility());
-        updatePersonalInfo.setPhnum_visibility(updateDTO.isPhnum_visibility());
+        if (updatePersonalInfo.isPresent()) {
+            UsersPersonalInfo updateUsersPersonalInfo = updatePersonalInfo.get();
+            UsersCredentialsInfo updateUsersCredentialsInfo = updateCredentialsInfo.get();
+            updateUsersPersonalInfo.setGender(updateDTO.getGender());
+            updateUsersPersonalInfo.setDob(updateDTO.getDob());
 
-        // Update credentials information
-//		updateCredentialsInfo.setUsername(updateDTO.getName());
-        updateCredentialsInfo.setPhnumber(updateDTO.getPhnumber());
-        updateCredentialsInfo.setEmail(updateDTO.getEmail());
+            log.info("" + updateDTO.isPhnum_visibility());
+            updateUsersPersonalInfo.setPhnum_visibility(updateDTO.isPhnum_visibility());
 
-//		// Delete the previous records as the username itself is changing we won't be
-//		// having uniqueness
-//		userpersonalinfoRepository.deleteById(userName);
-//		userscredentialsinfoRepository.deleteById(userName);
+            updateUsersCredentialsInfo.setPhnumber(updateDTO.getPhnumber());
+            updateUsersCredentialsInfo.setEmail(updateDTO.getEmail());
 
-        // Save the updated entities
-        userpersonalinfoRepository.save(updatePersonalInfo);
-        userscredentialsinfoRepository.save(updateCredentialsInfo);
-
+            userpersonalinfoRepository.save(updateUsersPersonalInfo);
+            userscredentialsinfoRepository.save(updateUsersCredentialsInfo);
+        } else {
+            throw new UserNotFoundException("User not found");
+        }
         return userName;
 
     }
 
+    public void deleteUserByUsername(String userName) {
+        Optional<UsersPersonalInfo> user = userpersonalinfoRepository.findById(userName);
+        if (user.isEmpty())
+            throw new UserNotFoundException("User Not Found");
+        userpersonalinfoRepository.deleteById(userName);
+        userscredentialsinfoRepository.deleteById(userName);
+    }
+
+    public void changePassword(PasswordDTO passwordDTO, String userName) {
+        Optional<UsersCredentialsInfo> updateCredentialsInfo = userscredentialsinfoRepository.findById(userName);
+        if (updateCredentialsInfo.isEmpty()) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        UsersCredentialsInfo updateUsersCredentialsInfo = updateCredentialsInfo.get();
+        String currentPassword = passwordDTO.getCurrentPassword();
+        String newPassword = passwordDTO.getConfirmPassword();
+
+        if (!passwordEncoder.matches(currentPassword, updateUsersCredentialsInfo.getPassword())) {
+            throw new PasswordMismatchException("Password is invalid");
+        }
+
+// Add a null check and logging for the new password
+        if (newPassword == null || newPassword.isEmpty()) {
+            log.error("New password is null or empty");
+            throw new IllegalArgumentException("New password cannot be null or empty");
+        }
+        updateUsersCredentialsInfo.setPassword(passwordEncoder.encode(newPassword));
+        userscredentialsinfoRepository.save(updateUsersCredentialsInfo);
+    }
 }

@@ -12,15 +12,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class AboutMeDTO {
 
-
     private String name;
     private String gender;
-
     private String phnumber;
-
     private Date dob;
     private String email;
-
     private boolean phnum_visibility;
-    // private String password;
 }

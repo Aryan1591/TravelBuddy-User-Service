@@ -3,21 +3,18 @@ package com.travelbuddy.user.service;
 import com.travelbuddy.user.exception.DuplicateAccountException;
 import com.travelbuddy.user.exception.PasswordMismatchException;
 import com.travelbuddy.user.exception.UserNotFoundException;
-import com.travelbuddy.user.model.AboutMeDTO;
-import com.travelbuddy.user.model.LoginDTO;
-import com.travelbuddy.user.model.SignupDTO;
-import com.travelbuddy.user.model.UpdateDTO;
-
-import jakarta.validation.Valid;
+import com.travelbuddy.user.model.*;
 
 public interface UserService {
-    public String login(LoginDTO userSignup)throws UserNotFoundException, PasswordMismatchException;
-    // public UserInfo register(UserInfo userInfo)throws DuplicateAccountException;
-    public String register(SignupDTO userSignup)throws DuplicateAccountException;
-    //UserInfo register(UserInfo userInfo) throws DuplicateAccountException;
-    //String login(LoginDTO LoginDTO) throws UserNotFoundException, PasswordMismatchException;
-    public AboutMeDTO getUserByUsername(String UserName);
+    public String login(LoginDTO userSignup) throws UserNotFoundException, PasswordMismatchException;
 
-    public String updateUserByUsername(UpdateDTO updateDTO, String UserName);
+    public String register(SignupDTO userSignup) throws DuplicateAccountException;
 
+    public AboutMeDTO getUserByUsername(String UserName) throws UserNotFoundException;
+
+    public String updateUserByUsername(UpdateDTO updateDTO, String UserName) throws UserNotFoundException;
+
+    public void deleteUserByUsername(String UserName) throws UserNotFoundException;
+
+    public void changePassword(PasswordDTO passwordDTO, String UserName) throws UserNotFoundException, PasswordMismatchException;
 }
