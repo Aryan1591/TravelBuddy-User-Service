@@ -1,25 +1,27 @@
 package com.travelbuddy.user.model;
 
-import com.travelbuddy.user.entity.UserCredentials;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import com.travelbuddy.user.entity.UsersCredentialsInfo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomizedUserDetails implements UserDetails {
 
-     private String userName;
-     private String password;
+    private String userName;
+    private String password;
 
-     public CustomizedUserDetails(UserCredentials loginDTO) {
-         this.userName = loginDTO.getUserName();
-         this.password = loginDTO.getPassWord();
-     }
+    public CustomizedUserDetails(UsersCredentialsInfo loginDTO) {
+        this.userName = loginDTO.getUsername();
+        this.password = loginDTO.getPassword();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
