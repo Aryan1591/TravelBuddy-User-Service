@@ -1,6 +1,5 @@
 package com.travelbuddy.user.entity;
 
-import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
@@ -14,22 +13,16 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Document
-public class UsersPersonalInfo
-{
+public class UsersPersonalInfo {
 
- @Id
- @NotEmpty(message="Enter your name.")
- private String username;
- private String gender;
-// private String phnumber;
- @DateTimeFormat(pattern="dd/MM/yyyy")
- @Past(message="Enter valid Date.")
- private Date dob;
- 
- @Nonnull
- private boolean phnum_visibility;
- 
-// @Indexed(unique=true)
- //private String email;
- //private String password;
+    @Id
+    @NotEmpty(message = "Enter your name.")
+    private String username;
+    private String gender;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @Past(message = "Enter valid Date.")
+    private Date dob;
+
+    private boolean phnum_visibility;
+
 }
