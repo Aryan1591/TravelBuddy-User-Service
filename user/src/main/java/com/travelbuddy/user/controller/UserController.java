@@ -31,7 +31,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.login(loginDTO), HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
         } catch (PasswordMismatchException passwordMismatchException) {
             return new ResponseEntity<>(passwordMismatchException.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -56,7 +56,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getUserByUsername(userName), HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -67,7 +67,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.updateUserByUsername(updateDTO, userName), HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -79,7 +79,7 @@ public class UserController {
             userService.deleteUserByUsername(userName);
             return new ResponseEntity<>("User Deleted Successfully", HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -91,10 +91,33 @@ public class UserController {
             userService.changePassword(passwordDTO, userName);
             return new ResponseEntity<>("Password has been updated Successfully", HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(userNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
         } catch (PasswordMismatchException passwordMismatchException) {
             return new ResponseEntity<>(passwordMismatchException.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @GetMapping("/gender/{username}")
+    public String getGenderFromUsername(@PathVariable String username) {
+        try {
+            return userService.fetchGender(username);
+        } catch (UserNotFoundException e) {
+            return "This user has not been registered";
+        }
+    }
+
+    @PostMapping("/{username}/posts/add")
+    public String addPostIdToUserBucket(@PathVariable String username, @RequestBody String postId) {
+        userService.addPostIdToUserBucket(username, postId);
+        return String.format("PostId %s has been successfully added to username %s list", postId, username);
+    }
+
+    @GetMapping("/email/{username}")
+    public String getEmailFromUsername(@PathVariable String username) {
+        try {
+            return userService.fetchEmail(username);
+        } catch (UserNotFoundException e) {
+            return "This user has not been registered";
+        }
+    }
 }

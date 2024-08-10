@@ -17,4 +17,10 @@ public interface UserService {
     public void deleteUserByUsername(String UserName) throws UserNotFoundException;
 
     public void changePassword(PasswordDTO passwordDTO, String UserName) throws UserNotFoundException, PasswordMismatchException;
+
+    public String fetchGender(String userName) throws UserNotFoundException;
+
+    public void addPostIdToUserBucket(String username, String postId);
+
+    public String fetchEmail(String userName) throws UserNotFoundException;
 }
