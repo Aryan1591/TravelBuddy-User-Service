@@ -1,14 +1,16 @@
 package com.travelbuddy.user.service;
 
-import com.travelbuddy.user.entity.UserPosts;
 import com.travelbuddy.user.entity.UsersCredentialsInfo;
 import com.travelbuddy.user.entity.UsersPersonalInfo;
 import com.travelbuddy.user.exception.DuplicateAccountException;
 import com.travelbuddy.user.exception.PasswordMismatchException;
 import com.travelbuddy.user.exception.UserNotFoundException;
-import com.travelbuddy.user.model.*;
+import com.travelbuddy.user.model.LoginDTO;
+import com.travelbuddy.user.model.SignupDTO;
+import com.travelbuddy.user.model.AboutMeDTO;
+import com.travelbuddy.user.model.UpdateDTO;
+import com.travelbuddy.user.model.PasswordDTO;
 import com.travelbuddy.user.repository.UserPersonalInfoRepository;
-import com.travelbuddy.user.repository.UserPostsManagementRepository;
 import com.travelbuddy.user.repository.UsersCredentialsInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -36,8 +35,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtService jwtService;
 
-    @Autowired
-    private UserPostsManagementRepository userPostsManagementRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -186,19 +183,6 @@ public class UserServiceImpl implements UserService {
                 .map(UsersPersonalInfo::getGender).orElseThrow(() -> new UsernameNotFoundException("No Account is available with username " + userName));
     }
 
-    @Override
-    public void addPostIdToUserBucket(String username, String postId) {
-        UserPosts userPosts = userPostsManagementRepository.findById(username).orElse(null);
-        if (Objects.isNull(userPosts)) {
-            userPosts = new UserPosts();
-            userPosts.setUsername(username);
-            userPosts.setPostIds(new ArrayList<>());
-        }
-        List<String> existingIds = userPosts.getPostIds();
-        existingIds.add(postId);
-        userPosts.setPostIds(existingIds);
-        userPostsManagementRepository.save(userPosts);
-    }
 
     @Override
     public String fetchEmail(String userName) throws UserNotFoundException {
