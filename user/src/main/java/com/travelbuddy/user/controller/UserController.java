@@ -106,11 +106,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{username}/posts/add")
-    public String addPostIdToUserBucket(@PathVariable String username, @RequestBody String postId) {
-        userService.addPostIdToUserBucket(username, postId);
-        return String.format("PostId %s has been successfully added to username %s list", postId, username);
-    }
 
     @GetMapping("/email/{username}")
     public String getEmailFromUsername(@PathVariable String username) {
