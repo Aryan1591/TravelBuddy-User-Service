@@ -27,4 +27,13 @@ public class UserPostsController {
     userPostsService.addPostIdToUserBucket(username, postId);
     return String.format("PostId %s has been successfully added to username %s list", postId, username);
   }
+  @DeleteMapping("/{username}/posts/remove")
+  public String removePostIdFromUserBucket(@PathVariable String username, @RequestParam String postId) {
+    try {
+      userPostsService.removePostIdFromUserBucket(username, postId);
+      return String.format("PostId %s has been successfully removed from username %s list", postId, username);
+    } catch (Exception e) {
+      return e.getMessage();
+    }
+  }
 }

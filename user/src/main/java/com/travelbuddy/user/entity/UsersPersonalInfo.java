@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +13,8 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@Document
+@NoArgsConstructor
+@Document(collection = "usersPersonalInfo")
 public class UsersPersonalInfo {
 
     @Id
