@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/users")
-@CrossOrigin(origins = {"http://localhost:5173"})
+@CrossOrigin(origins = {"https://66bd09f19028ae026b5372d9--courageous-bublanina-dd5958.netlify.app","https://travelbuddy-posts-service-production.up.railway.app"})
 public class UserController {
 
     @Autowired
