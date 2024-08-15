@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/users")
-@CrossOrigin(origins = {"https://66bd09f19028ae026b5372d9--courageous-bublanina-dd5958.netlify.app","https://travelbuddy-posts-service-production.up.railway.app"})
+@CrossOrigin(origins = {"https://66bd09f19028ae026b5372d9--courageous-bublanina-dd5958.netlify.app","http://travelbuddy-posts-service-production.up.railway.app"})
 public class UserController {
 
     @Autowired
@@ -97,12 +97,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/gender/{username}")
+    @RequestMapping(value = "/gender/{username}", method = RequestMethod.GET)
     public String getGenderFromUsername(@PathVariable String username) {
         try {
             return userService.fetchGender(username);
         } catch (UserNotFoundException e) {
-            return "This user has not been registered";
+            return "User has not been found";
         }
     }
 
