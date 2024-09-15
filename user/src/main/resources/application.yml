@@ -1,8 +1,8 @@
-security:
-  secretToken: 7689098B59776874367639792F423F4528482B4D6251765468576D5A71347438
+#security:
+#  secretToken: 7689098B59776874367639792F423F4528482B4D6251765468576D5A71347438
 
 server:
-  port: 8080
+  port: 8092
 
 spring:
   application:
@@ -18,4 +18,4 @@ eureka:
     fetch-registry: true
     registry-with-eureka: true
     service-url:
-      defaultZone: https://travelbuddy-servicediscovery-production.up.railway.app/eureka/
+      defaultZone:  https://travelbuddy-servicediscovery-production.up.railway.app/eureka/

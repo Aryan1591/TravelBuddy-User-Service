@@ -88,6 +88,18 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Nimbus JOSE + JWT Library for RSA and JWT Support -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.31</version>
+        </dependency>
+
+        <!-- Spring Boot Starter for OAuth2 Resource Server (for JWT handling) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
 
     </dependencies>
     <dependencyManagement>
